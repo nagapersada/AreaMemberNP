@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dashboard - DVTEAM</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="nav-left">
+      <img src="icon.png" alt="Logo" class="nav-logo">
+      <div class="user-info">
+        <h3 id="mName">Loading...</h3>
+        <small id="mUid">...</small>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span class="ref-label">UPLINE</span>
+      <span class="ref-val" id="mRefUid">...</span>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <div class="card" style="border-color: var(--gold); background: linear-gradient(135deg, #111, #000);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <span class="rank-label">MISI BERIKUTNYA</span>
+                <div class="rank-title" style="font-size:1.5rem;" id="nextTargetNum">0</div>
+                <span class="rank-desc">Anggota Tim</span>
+            </div>
+            <div style="width: 60px; height: 60px;">
+                <canvas id="targetChart"></canvas>
+            </div>
+        </div>
+        <div style="margin-top:10px; border-top:1px dashed #333; padding-top:5px;">
+            <small style="color:#888; font-size:10px;">Kekurangan: <b style="color:var(--danger)" id="targetGap">0</b> Anggota lagi</small>
+        </div>
+    </div>
+
+    <div class="card">
+      <span class="rank-label">TOTAL PASUKAN</span>
+      <div class="total-row">
+        <div class="total-left">
+          <div class="total-num" id="totalMembers">0</div>
+          <span class="total-sub">SELURUH JARINGAN</span>
+        </div>
+        <div class="total-right">
+          <span class="rank-label">PERINGKAT SAAT INI</span>
+          <div class="next-val" id="rankName" style="color:var(--gold)">MEMBER</div>
+          <span class="next-desc" id="rankNextGoal">...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="split-container">
+      <div class="chart-col">
+        <div class="chart-title" id="currentPeriodLabel">PERIODE INI</div>
+        <div class="chart-wrap">
+          <canvas id="growthChart"></canvas>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:0 5px;">
+           <div style="text-align:center;">
+             <span style="font-size:8px; color:#666;">PREV</span>
+             <div style="font-size:10px; font-weight:bold; color:#fff;" id="prevPeriodCount">0</div>
+           </div>
+           <div style="text-align:center;">
+             <span style="font-size:8px; color:#666;">TARGET</span>
+             <div style="font-size:10px; font-weight:bold; color:var(--gold);" id="targetCount">0</div>
+           </div>
+           <div style="text-align:center;">
+             <span style="font-size:8px; color:#666;">NEW</span>
+             <div style="font-size:10px; font-weight:bold; color:#fff;" id="newMemberCount">0</div>
+           </div>
+        </div>
+      </div>
+
+      <div class="vip-col">
+        <div class="vip-header-mini">DATA PERINGKAT TIM</div>
+        <div class="vip-grid">
+           <div class="vip-item" onclick="openVipModal(9)"><span class="vip-lvl">VIP 9</span><span class="vip-count" id="cVIP9">0</span></div>
+           <div class="vip-item" onclick="openVipModal(8)"><span class="vip-lvl">VIP 8</span><span class="vip-count" id="cVIP8">0</span></div>
+           <div class="vip-item" onclick="openVipModal(7)"><span class="vip-lvl">VIP 7</span><span class="vip-count" id="cVIP7">0</span></div>
+           <div class="vip-item" onclick="openVipModal(6)"><span class="vip-lvl">VIP 6</span><span class="vip-count" id="cVIP6">0</span></div>
+           <div class="vip-item" onclick="openVipModal(5)"><span class="vip-lvl">VIP 5</span><span class="vip-count" id="cVIP5">0</span></div>
+           <div class="vip-item" onclick="openVipModal(4)"><span class="vip-lvl">VIP 4</span><span class="vip-count" id="cVIP4">0</span></div>
+           <div class="vip-item" onclick="openVipModal(3)"><span class="vip-lvl">VIP 3</span><span class="vip-count" id="cVIP3">0</span></div>
+           <div class="vip-item" onclick="openVipModal(2)"><span class="vip-lvl">VIP 2</span><span class="vip-count" id="cVIP2">0</span></div>
+           <div class="vip-item" onclick="openVipModal(1)"><span class="vip-lvl">VIP 1</span><span class="vip-count" id="cVIP1">0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-grid">
+        <button class="btn-menu primary" onclick="openBroadcastModal()">🔥 BUAT KATA MOTIVASI</button>
+        <button class="btn-menu" onclick="openAchieverModal()">🏆 DATA PERAIH 50%</button>
+    </div>
+
+  </div> <div class="bottom-nav">
+      <a href="#" class="nav-btn active">
+          <span class="nav-icon">🏠</span>
+          <span>Home</span>
+      </a>
+      <a href="network.html" class="nav-btn">
+          <span class="nav-icon">🌳</span>
+          <span>Jaringan</span>
+      </a>
+      <a href="list.html" class="nav-btn">
+          <span class="nav-icon">📜</span>
+          <span>Daftar</span>
+      </a>
+      <a href="#" onclick="logout()" class="nav-btn">
+          <span class="nav-icon">🚪</span>
+          <span>Keluar</span>
+      </a>
+  </div>
+
+  <div id="vipModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">DAFTAR VIP</span>
+        <button class="btn-close" onclick="closeVipModal()">×</button>
+      </div>
+      <div class="modal-content" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="achieverModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span class="modal-title" id="achieverTitle">PERAIH 50%</span>
+            <button class="btn-close" onclick="closeAchieverModal()">×</button>
+        </div>
+        <div class="modal-content" id="achieverBody"></div>
+        <div style="padding:10px;">
+            <button id="btnDlAchiever" class="btn-menu primary" onclick="downloadAchieverData()">UNDUH TXT</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="broadcastModal" class="modal-overlay">
+      <div class="modal-box">
+          <div class="modal-header">
+              <span class="modal-title">GENERATOR MOTIVASI</span>
+              <button class="btn-close" onclick="document.getElementById('broadcastModal').style.display='none'">×</button>
+          </div>
+          <div class="modal-content" style="padding:15px;">
+              <textarea id="broadcastText" rows="8" style="width:100%; background:#000; color:#fff; border:1px solid #333; padding:10px; border-radius:8px; font-size:12px;"></textarea>
+              <button class="btn-menu primary" style="margin-top:10px;" onclick="copyBroadcast()">SALIN TEKS</button>
+          </div>
+      </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
