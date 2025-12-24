@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dashboard - DVTEAM</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="nav-left">
+      <img src="icon.png" alt="Logo" class="nav-logo">
+      <div class="user-info">
+        <h3 id="mName">Loading...</h3>
+        <small id="mUid">...</small>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span class="ref-label">UPLINE</span>
+      <span class="ref-val" id="mRefUid">...</span>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <div class="card" style="background: linear-gradient(135deg, #0f0f0f, #000); border-color: #333;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <span class="rank-label" style="color:var(--gold);">MISI: MENUJU PERINGKAT BARU</span>
+                <div class="rank-title" style="font-size:1.8rem;" id="nextTargetNum">0</div>
+                <span class="rank-desc">Target Anggota Tim</span>
+            </div>
+            <div style="width: 65px; height: 65px;">
+                <canvas id="targetChart"></canvas>
+            </div>
+        </div>
+        <div style="margin-top:12px; border-top:1px dashed #333; padding-top:8px;">
+            <small style="color:#aaa; font-size:11px;">Kurang <b style="color:var(--danger); font-size:12px;" id="targetGap">0</b> Anggota lagi</small>
+        </div>
+    </div>
+
+    <div class="card">
+      <span class="rank-label">TOTAL KEKUATAN PASUKAN</span>
+      <div class="total-row">
+        <div class="total-left">
+          <div class="total-num" id="totalMembers">0</div>
+          <span class="rank-desc" style="font-size:9px;">SELURUH JARINGAN</span>
+        </div>
+        <div class="total-right">
+          <span class="rank-label">PERINGKAT ANDA</span>
+          <div class="next-val" id="rankName" style="color:var(--gold)">...</div>
+          <span class="rank-desc" id="rankNextGoal" style="font-size:9px;">...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="split-container">
+      
+      <div class="chart-col">
+        <div class="chart-title" id="currentPeriodLabel">PERIODE INI</div>
+        
+        <div class="stat-grid-small">
+           <div class="stat-item-small"><span>PREV</span><span id="prevPeriodCount">0</span></div>
+           <div class="stat-item-small"><span>TARGET</span><span style="color:var(--gold)" id="targetCount">0</span></div>
+           <div class="stat-item-small"><span>NEW</span><span id="newMemberCount">0</span></div>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="growthChart"></canvas>
+        </div>
+
+        <div class="countdown-box">
+            <span class="countdown-label">SISA WAKTU PERIODE</span>
+            <span class="countdown-val" id="countdownTimer">00:00:00</span>
+        </div>
+        
+        <div style="margin-top:5px; text-align:center;">
+            <span style="font-size:8px; color:#ff4d4d;">KURANG <b id="gapCount" style="font-size:10px;">0</b> UNTUK 50%</span>
+        </div>
+      </div>
+
+      <div class="vip-col">
+        <div class="vip-header-mini">STRUKTUR PERINGKAT TIM</div>
+        <div class="vip-grid">
+           <div class="vip-item" id="boxVIP9" onclick="openVipModal(9)"><span class="vip-lvl">VIP 9</span><span class="vip-count" id="cVIP9">0</span></div>
+           <div class="vip-item" id="boxVIP8" onclick="openVipModal(8)"><span class="vip-lvl">VIP 8</span><span class="vip-count" id="cVIP8">0</span></div>
+           <div class="vip-item" id="boxVIP7" onclick="openVipModal(7)"><span class="vip-lvl">VIP 7</span><span class="vip-count" id="cVIP7">0</span></div>
+           <div class="vip-item" id="boxVIP6" onclick="openVipModal(6)"><span class="vip-lvl">VIP 6</span><span class="vip-count" id="cVIP6">0</span></div>
+           <div class="vip-item" id="boxVIP5" onclick="openVipModal(5)"><span class="vip-lvl">VIP 5</span><span class="vip-count" id="cVIP5">0</span></div>
+           <div class="vip-item" id="boxVIP4" onclick="openVipModal(4)"><span class="vip-lvl">VIP 4</span><span class="vip-count" id="cVIP4">0</span></div>
+           <div class="vip-item" id="boxVIP3" onclick="openVipModal(3)"><span class="vip-lvl">VIP 3</span><span class="vip-count" id="cVIP3">0</span></div>
+           <div class="vip-item" id="boxVIP2" onclick="openVipModal(2)"><span class="vip-lvl">VIP 2</span><span class="vip-count" id="cVIP2">0</span></div>
+           <div class="vip-item" id="boxVIP1" onclick="openVipModal(1)"><span class="vip-lvl">VIP 1</span><span class="vip-count" id="cVIP1">0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-grid">
+        <button class="btn-menu primary" onclick="openBroadcastModal()">🔥 GENERATOR MOTIVASI</button>
+        <button class="btn-menu" onclick="openAchieverModal()">🏆 LIHAT PERAIH 50%</button>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+      <a href="#" class="nav-btn active">
+          <span class="nav-icon">🏠</span>
+          <span>Home</span>
+      </a>
+      <a href="network.html" class="nav-btn">
+          <span class="nav-icon">🌳</span>
+          <span>Jaringan</span>
+      </a>
+      <a href="list.html" class="nav-btn">
+          <span class="nav-icon">📜</span>
+          <span>Daftar</span>
+      </a>
+      <a href="#" onclick="logout()" class="nav-btn">
+          <span class="nav-icon">🚪</span>
+          <span>Keluar</span>
+      </a>
+  </div>
+
+  <div id="vipModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">DAFTAR VIP</span>
+        <button class="btn-close" onclick="closeVipModal()">×</button>
+      </div>
+      <div class="modal-content" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="achieverModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span class="modal-title" id="achieverTitle">PERAIH 50%</span>
+            <button class="btn-close" onclick="closeAchieverModal()">×</button>
+        </div>
+        <div class="modal-content" id="achieverBody"></div>
+        <div style="padding:15px;">
+            <button id="btnDlAchiever" class="btn-menu primary" onclick="downloadAchieverData()">UNDUH DATA (TXT)</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="broadcastModal" class="modal-overlay">
+      <div class="modal-box">
+          <div class="modal-header">
+              <span class="modal-title">GENERATOR MOTIVASI</span>
+              <button class="btn-close" onclick="document.getElementById('broadcastModal').style.display='none'">×</button>
+          </div>
+          <div class="modal-content" style="padding:20px;">
+              <textarea id="broadcastText" rows="10" style="width:100%; background:#000; color:#fff; border:1px solid #333; padding:15px; border-radius:10px; font-size:13px;"></textarea>
+              <button class="btn-menu primary" style="margin-top:15px;" onclick="copyBroadcast()">SALIN TEKS</button>
+          </div>
+      </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
