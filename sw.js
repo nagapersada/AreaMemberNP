@@ -1,4 +1,4 @@
-const CACHE = 'dvteam-v24'; // VERSI DIPERBARUI (Wajib diganti setiap update kode)
+const CACHE = 'dvteam-v30'; // VERSI DIPERBARUI (Wajib diganti setiap update kode)
 const ASSETS = [
     './', 
     'index.html', 
